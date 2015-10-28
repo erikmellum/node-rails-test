@@ -24,14 +24,13 @@ class PrototypesController < ApplicationController
   # POST /prototypes
   # POST /prototypes.json
   def create
-    puts "#{params[:attachment]}"
-    raise "#{params[:attachment]}"
-     @temp_upload = Prototype.new(params[:attachment])
+     puts "#{params[:attachment]}"
+     @temp_upload = Prototype.new(filename: params[:attachment])
 
-     @upload = Prototype.where(:upload_file_name => @temp_upload.upload_file_name).first
+     @upload = Prototype.where(:filename => @temp_upload.filename).first
 
      if @upload.nil?
-       @upload = Prototype.create(params[:attachment])
+       @upload = Prototype.create(filename: params[:attachment])
      else
        if @upload.upload_file_size.nil?
          @upload.upload_file_size = @temp_upload.upload_file_size
@@ -41,21 +40,21 @@ class PrototypesController < ApplicationController
      end
 
     p = params[:attachment]
-    name = p[:attachment].original_filename
-    directory = "uploads"
+    name = p.original_filename
+    directory = "tmp/uploads"
 
-    path = File.join(directory, name.gsub(" ","_"))
+    path = File.join(directory, name.gsub(" ", "_"))
     puts(path)
-    File.open(path, "ab") { |f| f.write(p[:attachment].read) }
+    File.open(path, "ab") { |f| f.write(p.read) }
 
     respond_to do |format|
       if @upload.save
         format.html {
-          render :json => [@upload.to_jq_upload].to_json,
+          render :json => [@upload].to_json,
           :content_type => 'text/html',
           :layout => false
         }
-        format.json { render json: {files: [@upload.to_jq_upload]}, status: :created, location: @upload }
+        format.json { render json: {files: [@upload]}, status: :created, location: @upload }
       else
         format.html { render action: "new" }
         format.json { render json: @upload.errors, status: :unprocessable_entity }
