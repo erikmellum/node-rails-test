@@ -32,11 +32,11 @@ class PrototypesController < ApplicationController
      if @upload.nil?
        @upload = Prototype.create(filename: params[:attachment])
      else
-       if @upload.upload_file_size.nil?
-         @upload.upload_file_size = @temp_upload.upload_file_size
-       else
-        @upload.upload_file_size += @temp_upload.upload_file_size
-      end
+      #  if @upload.upload_file_size.nil?
+      #    @upload.upload_file_size = @temp_upload.upload_file_size
+      #  else
+      #   @upload.upload_file_size += @temp_upload.upload_file_size
+      # end
      end
 
     p = params[:attachment]
